@@ -27,7 +27,7 @@ The API usually hides implementation details from clients, the application code 
 
 ## 1.3. Reliability
 
-A system should continue to work _correctly_ even when there are software, hardware or human error faults.
+    A system should continue to work _correctly_ even when there are software, hardware or human error faults.
 
 Examples of reliability:
 
@@ -49,7 +49,7 @@ In order to improve fault-tolerance, it's a good idea to regularly cause faults 
 
 ## 1.4. Scalability
 
-A system should be able to deal with growth (load, data volume or complexity).
+    A system should be able to deal with growth (load, data volume or complexity).
 
 
 ### 1.4.1. Describing load
@@ -58,11 +58,11 @@ _Load_: it can be described with load parameters, which depend on the architectu
 
 Example of scalability for Twitter's solution to update the timeline of tweets for a user:
 
-__Solution 1.__ When a user posts a tweet, it's inserted to a global table of tweets (see below for DB example). Queries return the current tweets for the timeline of a user (tweets of people that the user follows).
+* __Solution 1.__ When a user posts a tweet, it's inserted to a global table of tweets (see below for DB example). Queries return the current tweets for the timeline of a user (tweets of people that the user follows).
 
-__Solution 2.__ There is a cache for each user's timeline. When a user posts a tweet, the cache of each follower is updated to include this tweet. Any requests to read the timeline are fast since the result has been computed ahead of time.
+* __Solution 2.__ There is a cache for each user's timeline. When a user posts a tweet, the cache of each follower is updated to include this tweet. Any requests to read the timeline are fast since the result has been computed ahead of time.
 
-__Solution 3.__ Hybrid approach: for users with a very large number of followers, solution 1 is used, for the rest of users, solution 2 is used.
+* __Solution 3.__ Hybrid approach: for users with a very large number of followers, solution 1 is used, for the rest of users, solution 2 is used.
 
 Solution 1 was not scalable and caused issues when the application grew in number of users, so Solution 2 helped cope with the growth, making the application more scalable. The reason why the second solution was more performant is that there are way more requests to read the timeline than to post a tweet. The downside is that there is more work required by the application when a user posts a tweet.
 
@@ -93,3 +93,37 @@ A single slow request in a server can slow down an entire user request if many r
 ### 1.4.3. Coping with load
 
 We can _scale up_ (vertical scaling - more resources in a machine) or _scale out_ (horizontal scaling - distribute the load in more smaller machines or instances).
+
+In most situations, you need a hybrid approach where you have multiple powerful machines, rather than only a few very powerful ones or a large number of small ones. There is no universal solution and this would depend on the load parameters for the application.
+
+Some systems can cope with increasing load in an automated way, scaling as needed (_elastic_ systems). Otherwise, this can be done manually, it's more time consuming but the system is simpler.
+
+
+## 1.5. Maintainability
+
+    A system should allow people working on it to do so productively.
+
+The majority of the cost of software is not in it's initial development but in its maintenance. We will spend the majority of the development time maintaining an application (fixing it, adding new functionality, tech debt...), so it's important to work in a way that reduces the effort needed to do this work, avoiding the creation of legacy software.
+
+There are three principles for this:
+
+* __Operability:__ make it easy for operations to run smoothly
+* __Simplicity:__ make it easy for engineers to understand the system, remove complexity
+* __Evolvability:__ make it easy for engineers to make changes in the future (AKA extensibility, modifiability or plasticity)
+
+
+### 1.5.1. Operability
+
+We can make operations easier by:
+
+- Giving visibility into runtime behaviour, such as with monitoring tools
+- Providing support for automation and integration with tools
+- Making the application resilient so it can tolerate machines being down (don't run on individual machine)
+- Providing good documentation
+- Providing good default behaviour with the ability to override these defaults
+- Self-healing with the ability for admins to take control if needed
+- Predictable behaviour
+
+
+### 1.5.2. Simplicity
+
